@@ -1,7 +1,9 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
+import consts from '@/lib/consts.js';
+import { sum } from 'ramda';
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export const stateConfig = {
   form: {
@@ -13,12 +15,37 @@ export const stateConfig = {
 }
 
 export const getters = {
-  notaryCosts: () => null,
-  rawLoanAmount: () => null,
-  loanToValue: () => null,
-  brokerCosts: () => null,
-  stampDutyCosts: () => null,
-  totalCost: () => null
+  notaryCosts:
+    ({ form: { propertyPurchasePrice } }) => propertyPurchasePrice
+                                               ? 2144.0 + (0.013 * (propertyPurchasePrice-100000))
+                                               : null,
+  rawLoanAmount({ form: { propertyPurchasePrice, totalSavings } }, { totalCost }) {
+    if (!(propertyPurchasePrice && totalSavings && totalCost)) return null;
+
+    return totalCost - totalSavings + propertyPurchasePrice;
+  },
+  loanToValue({ form: { propertyPurchasePrice } }, { rawLoanAmount }) {
+    if (!(rawLoanAmount && propertyPurchasePrice)) return null;
+
+    return Math.round(rawLoanAmount / propertyPurchasePrice * 1000) / 1000;
+  },
+  brokerCosts({ form: { propertyPurchasePrice, realEstateCommision } }) {
+    if (!propertyPurchasePrice) return null;
+    if (realEstateCommision === null) return null;
+    if (realEstateCommision === false) return 0;
+
+    return Math.round(consts.BROKER_TAX * propertyPurchasePrice);
+  },
+  stampDutyCosts:
+    ({ form: { propertyPurchasePrice } }) => propertyPurchasePrice
+                                               ? Math.round(propertyPurchasePrice * consts.CITY_TAX)
+                                               : null,
+  totalCost(_state, { notaryCosts, brokerCosts, stampDutyCosts }) {
+    if (brokerCosts === null) return null;
+    if (!(notaryCosts && stampDutyCosts)) return null;
+
+    return sum([notaryCosts, brokerCosts, stampDutyCosts]);
+  }
 }
 
 export const mutations = {

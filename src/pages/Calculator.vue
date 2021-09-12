@@ -22,20 +22,22 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="6">
+      <v-col cols="7">
         <v-card
           elevation="6"
         >
           <v-card-title class="calculator__result-label">Implied loan</v-card-title>
-          <v-card-text class="calculator__result-value">9001,44€</v-card-text>
+          <v-card-text v-if="rawLoanAmount" class="calculator__result-value">{{rawLoanAmount}}€</v-card-text>
+          <v-card-text v-else class="calculator__result-value">N/A</v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="6">
+      <v-col cols="5">
         <v-card
           elevation="6"
         >
           <v-card-title class="calculator__result-label">Loan to value</v-card-title>
-          <v-card-text class="calculator__result-value">9001,44%</v-card-text>
+          <v-card-text v-if="loanToValue" class="calculator__result-value">{{loanToValue}}%</v-card-text>
+          <v-card-text v-else class="calculator__result-value">N/A</v-card-text>
         </v-card>
       </v-col>
     </v-row>
@@ -44,13 +46,20 @@
 
 <script>
   import CalculatorForm from '@/components/CalculatorForm.vue';
+  import { mapGetters } from 'vuex';
 
   export default {
     name: 'Calculator',
     data: () => ({
     }),
-    components:{
+    components: {
       CalculatorForm
+    },
+    computed: {
+      ...mapGetters([
+        'rawLoanAmount',
+        'loanToValue',
+      ])
     }
   }
 </script>
@@ -59,7 +68,7 @@
   @import '@/mixins/colors.scss';
 
   .calculator__container {
-    max-width: 600px;
+    max-width: 700px;
   }
 
   .v-card__title.calculator__title {

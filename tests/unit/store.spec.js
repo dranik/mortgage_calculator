@@ -7,8 +7,8 @@ describe('Testing store', () => {
 
     const defaultGettersState = {
       notaryCosts: null,
-      rawLoanAmount: "N/A",
-      loanToValue: "N/A",
+      rawLoanAmount: null,
+      loanToValue: null,
       brokerCosts: null,
       stampDutyCosts: null,
       totalCost: null
@@ -24,15 +24,16 @@ describe('Testing store', () => {
       it('returns 2144 if propertyPurchasePrice is set to 100000', () => {
         const state = evolve(
           defaultState,
-          { propertyPurchasePrice: 100000 }
+          { form: { propertyPurchasePrice: 100000 }}
         )
+
         expect(getter(state, defaultGettersState)).toEqual(2144);
       })
 
       it('returns 1494 if propertyPurchasePrice is set to 50000', () => {
         const state = evolve(
           defaultState,
-          { propertyPurchasePrice: 50000 }
+          { form: { propertyPurchasePrice: 50000 } }
         )
         expect(getter(state, defaultGettersState)).toEqual(1494);
       })
@@ -40,7 +41,7 @@ describe('Testing store', () => {
       it('returns 2791 if propertyPurchasePrice is set to 150000', () => {
         const state = evolve(
           defaultState,
-          { propertyPurchasePrice: 150000 }
+          { form: { propertyPurchasePrice: 150000 } }
         )
         expect(getter(state, defaultGettersState)).toEqual(2794);
       })
@@ -53,19 +54,23 @@ describe('Testing store', () => {
         const state = evolve(
           defaultState,
           {
-            propertyPurchasePrice: 100000,
-            realEstateCommision: true
+            form: {
+              propertyPurchasePrice: 100000,
+              realEstateCommision: true
+            }
           }
         );
-        expect(getter(state, defaultGettersState)).toEqual(6000);
+        expect(getter(state, defaultGettersState)).toEqual(7140);
       });
 
       it('returns 0 if propertyPurchasePrice is set to 100000 and real estate commision is set to false', () => {
         const state = evolve(
           defaultState,
           {
-            propertyPurchasePrice: 100000,
-            realEstateCommision: false
+            form: {
+              propertyPurchasePrice: 100000,
+              realEstateCommision: false
+            }
           }
         );
         expect(getter(state, defaultGettersState)).toEqual(0);
@@ -75,7 +80,9 @@ describe('Testing store', () => {
         const state = evolve(
           defaultState,
           {
-            realEstateCommision: true
+            form: {
+              realEstateCommision: true
+            }
           }
         );
         expect(getter(state, defaultGettersState)).toEqual(null);
@@ -97,7 +104,9 @@ describe('Testing store', () => {
         const state = evolve(
           defaultState,
           {
-            propertyPurchasePrice: 100000
+            form: {
+              propertyPurchasePrice: 100000
+            }
           }
         );
 
@@ -163,6 +172,19 @@ describe('Testing store', () => {
 
         expect(getter(defaultState, gettersState)).toEqual(6000);
       });
+
+      it('returns the sum of costs when all costs are calculated(even if broker cost is zero)', () => {
+        const gettersState = evolve(
+          defaultGettersState,
+          {
+            notaryCosts: 1000,
+            brokerCosts: 0,
+            stampDutyCosts: 3000
+          }
+        )
+
+        expect(getter(defaultState, gettersState)).toEqual(4000);
+      });
     });
 
     describe('rawLoanAmount', () => {
@@ -176,8 +198,10 @@ describe('Testing store', () => {
         const state = evolve(
           defaultState,
           {
-            propertyPurchasePrice: 100000,
-            totalSavings: 50000
+            form: {
+              propertyPurchasePrice: 100000,
+              totalSavings: 50000
+            }
           }
         );
         expect(getter(state, defaultGettersState)).toEqual(null);
@@ -187,7 +211,9 @@ describe('Testing store', () => {
         const state = evolve(
           defaultState,
           {
-            propertyPurchasePrice: 100000
+            form: {
+              propertyPurchasePrice: 100000
+            }
           }
         );
         const gettersState = evolve(
@@ -203,7 +229,9 @@ describe('Testing store', () => {
         const state = evolve(
           defaultState,
           {
-            totalSavings: 50000
+            form: {
+              totalSavings: 50000
+            }
           }
         );
         const gettersState = evolve(
@@ -219,8 +247,10 @@ describe('Testing store', () => {
         const state = evolve(
           defaultState,
           {
-            propertyPurchasePrice: 100000,
-            totalSavings: 50000
+            form: {
+              propertyPurchasePrice: 100000,
+              totalSavings: 50000
+            }
           }
         );
         const gettersState = evolve(
@@ -229,7 +259,7 @@ describe('Testing store', () => {
             totalCost: 10000
           }
         )
-        expect(getter(state, gettersState)).toEqual(null);
+        expect(getter(state, gettersState)).toEqual(60000);
       });
     });
 
@@ -244,7 +274,9 @@ describe('Testing store', () => {
         const state = evolve(
           defaultState,
           {
-            propertyPurchasePrice: 100000
+            form: {
+              propertyPurchasePrice: 100000
+            }
           }
         );
         expect(getter(state, defaultGettersState)).toEqual(null);
@@ -254,7 +286,9 @@ describe('Testing store', () => {
         const gettersState = evolve(
           defaultGettersState,
           {
-            rawLoanAmount: 110000
+            form: {
+              rawLoanAmount: 110000
+            }
           }
         )
         expect(getter(defaultState, gettersState)).toEqual(null);
@@ -264,7 +298,9 @@ describe('Testing store', () => {
         const state = evolve(
           defaultState,
           {
-            propertyPurchasePrice: 100000
+            form: {
+              propertyPurchasePrice: 100000
+            }
           }
         );
 
@@ -281,7 +317,9 @@ describe('Testing store', () => {
         const state = evolve(
           defaultState,
           {
-            propertyPurchasePrice: 0
+            form: {
+              propertyPurchasePrice: 0
+            }
           }
         );
 
@@ -291,7 +329,7 @@ describe('Testing store', () => {
             rawLoanAmount: 110000
           }
         );
-        expect(getter(state, gettersState)).toEqual(1.1);
+        expect(getter(state, gettersState)).toEqual(null);
       });
     });
   })

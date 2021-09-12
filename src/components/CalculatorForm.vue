@@ -71,8 +71,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { required, numeric, minValue } from 'vuelidate/lib/validators'
+import { mapState } from 'vuex';
+import { required, numeric, minValue } from 'vuelidate/lib/validators';
 
 
 export default {
@@ -117,9 +117,6 @@ export default {
   },
   provide() {
     return {
-      onChange: (input) => {
-        this.setField(input);
-      },
       $v: this.validation
     }
   },
