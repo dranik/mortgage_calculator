@@ -8,7 +8,9 @@
             placeholder="e.g 200000"
             name="propertyPurchasePrice"
             :value="propertyPurchasePrice"
-            @change="setField('propertyPurchasePrice', $event)"
+            @input="setField('propertyPurchasePrice', $event)"
+            type="number"
+            :error-messages="propertyPurchasePriceError"
             prepend-inner-icon="mdi-currency-eur"
             outlined
           ></v-text-field>
@@ -19,7 +21,9 @@
             placeholder="e.g 50000"
             name="totalSavings"
             :value="totalSavings"
-            @change="setField('totalSavings', $event)"
+            @input="setField('totalSavings', $event)"
+            type="number"
+            :error-messages="totalSavingsError"
             prepend-inner-icon="mdi-currency-eur"
             outlined
           ></v-text-field>
@@ -32,8 +36,9 @@
             :items="items"
             name="realEstateCommision"
             :value="realEstateCommision"
-            @change="setField('realEstateCommision', $event)"
+            @input="setField('realEstateCommision', $event)"
             placeholder="Please select"
+            :error-messages="realEstateCommisionError"
             outlined
           ></v-select>
         </v-col>
@@ -43,7 +48,9 @@
             placeholder="e.g 2.0"
             name="annualPaymentRate"
             :value="annualPaymentRate"
-            @change="setField('annualPaymentRate', $event)"
+            @input="setField('annualPaymentRate', $event)"
+            type="number"
+            :error-messages="annualPaymentRateError"
             outlined
           >
             <v-icon
@@ -69,6 +76,8 @@
 
 <script>
 import { mapState } from 'vuex'
+import { required, numeric, minValue } from 'vuelidate/lib/validators'
+
 
 export default {
   name: 'CalculatorForm',
@@ -84,13 +93,31 @@ export default {
       }
     ]
   }),
+  validations: {
+    propertyPurchasePrice: { required, numeric, minValue: minValue(1) },
+    totalSavings: { required, numeric, minValue: minValue(1) },
+    realEstateCommision: { required },
+    annualPaymentRate: { required, minValue: minValue(0.1) }
+  },
   computed: {
     ...mapState({
       propertyPurchasePrice: ({form: { propertyPurchasePrice } }) => propertyPurchasePrice,
       totalSavings: ({form: { totalSavings } }) => totalSavings,
       realEstateCommision: ({form: { realEstateCommision } }) => realEstateCommision,
       annualPaymentRate: ({form: { annualPaymentRate } }) => annualPaymentRate
-    })
+    }),
+    propertyPurchasePriceError() {
+      return this.validationMessageFor(this.$v.propertyPurchasePrice);
+    },
+    totalSavingsError() {
+      return this.validationMessageFor(this.$v.totalSavings);
+    },
+    realEstateCommisionError() {
+      return this.validationMessageFor(this.$v.realEstateCommision);
+    },
+    annualPaymentRateError() {
+      return this.validationMessageFor(this.$v.annualPaymentRate);
+    },
   },
   provide() {
     return {
@@ -101,11 +128,26 @@ export default {
     }
   },
   methods: {
+    validationMessageFor(field) {
+      if (field.$model === null) return null;
+      if (field.$invalid) return 'Enter the correct value'
+      return null;
+    },
     increaseAnnualPayment() {
-
+      this.setField(
+        'annualPaymentRate',
+        this.annualPaymentRate
+          ? Math.round((Number(this.annualPaymentRate) + 0.1) * 10) / 10
+          : 2.0
+      )
     },
     decreaseAnnualPayment() {
-
+      this.setField(
+        'annualPaymentRate',
+        this.annualPaymentRate
+          ? Math.round((Number(this.annualPaymentRate) - 0.1) * 10) / 10
+          : 2.0
+      )
     },
     setField(field, value) {
       this.$store.dispatch('setField', { field, value })

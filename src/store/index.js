@@ -9,14 +9,17 @@ export default new Vuex.Store({
       propertyPurchasePrice: null,
       totalSavings: null,
       realEstateCommision: null,
-      annualPaymentRate: 2
+      annualPaymentRate: null
     }
   },
   mutations: {
+    setFormField(state, { field, value }) {
+      state.form[field] = 'boolean' === typeof(value) ? value : Number(value);
+    }
   },
   actions: {
-    setField(_context, { field, value }) {
-      console.log(field, value);
+    setField({ commit }, { field, value }) {
+      commit('setFormField', { field, value });
     }
   }
 })
