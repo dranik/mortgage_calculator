@@ -57,16 +57,12 @@
               slot="append"
               color="primary"
               @click="increaseAnnualPayment"
-            >
-              mdi-plus
-            </v-icon>
+            > mdi-plus </v-icon>
             <v-icon
               slot="prepend-inner"
               color="primary"
               @click="decreaseAnnualPayment"
-            >
-              mdi-minus
-            </v-icon>
+            > mdi-minus </v-icon>
           </v-text-field>
         </v-col>
       </v-row>
