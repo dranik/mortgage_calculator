@@ -49,6 +49,40 @@ export const getters = {
     if (!(notaryCosts && stampDutyCosts)) return null;
 
     return sum([notaryCosts, brokerCosts, stampDutyCosts]);
+  },
+  preparedTableEntries() {
+    return [
+      {
+        years: "5",
+        borrowingRate: 0.7,
+        monthlyRate: 710.24
+      },
+      {
+        years: "10",
+        borrowingRate: 0.75,
+        monthlyRate: 723.39
+      },
+      {
+        years: "15",
+        borrowingRate: 1.04,
+        monthlyRate: 799.68
+      },
+      {
+        years: "20",
+        borrowingRate: 1.32,
+        monthlyRate: 873.33
+      },
+      {
+        years: "25",
+        borrowingRate: 1.89,
+        monthlyRate: 1023.27
+      },
+      {
+        years: "30",
+        borrowingRate: 1.94,
+        monthlyRate: 1036.43
+      }
+    ]
   }
 }
 
@@ -78,9 +112,7 @@ export const actions = {
     commit('setTableData', null);
     commit('revealTable');
     const response = await graphQlQuery();
-    commit('setTableData', response.content);
-
-
+    commit('setTableData', response.content.data.root);
   }
 }
 

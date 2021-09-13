@@ -332,5 +332,84 @@ describe('Testing store', () => {
         expect(getter(state, gettersState)).toEqual(null);
       });
     });
+
+    describe('preparedTableEntries', () => {
+      const getter = getters.preparedTableEntries;
+
+      it('returns empty array in default state', () => {
+        expect(getter(defaultState, defaultGettersState)).toEqual([]);
+      })
+
+      it('returns records ready for the table if tableData is populated', () => {
+        const state = evolve(
+          defaultState,
+          {
+            tableData: {
+              "ratesTable": {
+                "5": {
+                  "borrowingRate": 0.7,
+                  "monthlyRate": 710.24
+                },
+                "10": {
+                  "borrowingRate": 0.75,
+                  "monthlyRate": 723.39
+                },
+                "15": {
+                  "borrowingRate": 1.04,
+                  "monthlyRate": 799.68
+                },
+                "20": {
+                  "borrowingRate": 1.32,
+                  "monthlyRate": 873.33
+                },
+                "25": {
+                  "borrowingRate": 1.89,
+                  "monthlyRate": 1023.27
+                },
+                "30": {
+                  "borrowingRate": 1.94,
+                  "monthlyRate": 1036.43
+                }
+              }
+            }
+          }
+        );
+
+        const result = [
+          {
+            years: "5",
+            borrowingRate: 0.7,
+            monthlyRate: 710.24
+          },
+          {
+            years: "10",
+            borrowingRate: 0.75,
+            monthlyRate: 723.39
+          },
+          {
+            years: "15",
+            borrowingRate: 1.04,
+            monthlyRate: 799.68
+          },
+          {
+            years: "20",
+            borrowingRate: 1.32,
+            monthlyRate: 873.33
+          },
+          {
+            years: "25",
+            borrowingRate: 1.89,
+            monthlyRate: 1023.27
+          },
+          {
+            years: "30",
+            borrowingRate: 1.94,
+            monthlyRate: 1036.43
+          }
+        ]
+
+        expect(getter(state, defaultGettersState)).toEqual(result);
+      })
+    })
   })
 })
