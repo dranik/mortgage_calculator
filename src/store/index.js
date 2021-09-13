@@ -1,7 +1,16 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import consts from '@/lib/consts.js';
-import { sum } from 'ramda';
+import { sum,
+         pipe,
+         unapply,
+         identity,
+         pathOr,
+         toPairs,
+         map,
+         converge,
+         assoc,
+         propOr } from 'ramda';
 import { graphQlQuery } from '@/api/mock.js';
 
 Vue.use(Vuex);
@@ -50,40 +59,20 @@ export const getters = {
 
     return sum([notaryCosts, brokerCosts, stampDutyCosts]);
   },
-  preparedTableEntries() {
-    return [
-      {
-        years: "5",
-        borrowingRate: 0.7,
-        monthlyRate: 710.24
-      },
-      {
-        years: "10",
-        borrowingRate: 0.75,
-        monthlyRate: 723.39
-      },
-      {
-        years: "15",
-        borrowingRate: 1.04,
-        monthlyRate: 799.68
-      },
-      {
-        years: "20",
-        borrowingRate: 1.32,
-        monthlyRate: 873.33
-      },
-      {
-        years: "25",
-        borrowingRate: 1.89,
-        monthlyRate: 1023.27
-      },
-      {
-        years: "30",
-        borrowingRate: 1.94,
-        monthlyRate: 1036.43
-      }
-    ]
-  }
+  preparedTableEntries: pipe(
+    unapply(identity),
+    pathOr({}, [0, 'tableData', 'ratesTable']),
+    toPairs,
+    map(
+      converge(
+        assoc('years'),
+        [
+          propOr('N/A', 0),
+          propOr({}, 1)
+        ]
+      )
+    )
+  )
 }
 
 export const mutations = {
