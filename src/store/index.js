@@ -97,10 +97,10 @@ export const actions = {
   setValidity({ commit }, value) {
     commit('setFormValidity', value);
   },
-  async calculate({ commit }) {
+  async calculate({ commit, getters: { rawLoanAmount }, state: { propertyPurchasePrice, annualPaymentRate } }) {
     commit('setTableData', null);
     commit('revealTable');
-    const response = await graphQlQuery();
+    const response = await graphQlQuery({ rawLoanAmount, propertyPurchasePrice, annualPaymentRate });
     commit('setTableData', response.content.data.root);
   }
 }
