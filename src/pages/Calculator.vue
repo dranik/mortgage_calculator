@@ -15,7 +15,7 @@
               color="primary"
               width="150"
               :disabled="!isFormValid"
-              @click="$store.dispatch('calculate');"
+              @click="calculate"
             >
               Calculate
             </v-btn>
@@ -49,7 +49,7 @@
           <v-card-title v-if="tableData" class="calculator__title">Available rates</v-card-title>
           <v-card-title v-else class="calculator__title">We are processing your request</v-card-title>
           <v-card-text v-if="tableData">
-            {{tableData}}
+            <Table></Table>
           </v-card-text>
           <v-card-text v-else>
             <v-progress-linear
@@ -65,6 +65,7 @@
 <script>
 import { mapState } from 'vuex';
 import CalculatorForm from '@/components/CalculatorForm.vue';
+import Table from '@/components/Table.vue';
 import { mapGetters } from 'vuex';
 
 export default {
@@ -72,7 +73,8 @@ export default {
   data: () => ({
   }),
   components: {
-    CalculatorForm
+    CalculatorForm,
+    Table
   },
   computed: {
     ...mapGetters([
@@ -84,6 +86,17 @@ export default {
       showTableCard: ({ showTableCard }) => showTableCard,
       tableData: ({ tableData }) => tableData
     }),
+  },
+  methods: {
+    async calculate(){
+      await this.$store.dispatch('calculate');
+      const tableSelector = document.getElementById("table");
+      window.scroll({
+        behavior: 'smooth',
+        left: 0,
+        top: tableSelector.offsetTop + tableSelector.offsetHeight 
+      });
+    }
   }
 }
 </script>
