@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import consts from '@/lib/consts.js';
 import { sum } from 'ramda';
+import { graphQlQuery } from '@/api/mock.js';
 
 Vue.use(Vuex);
 
@@ -11,7 +12,10 @@ export const stateConfig = {
     totalSavings: null,
     realEstateCommision: null,
     annualPaymentRate: null
-  }
+  },
+  isFormValid: false,
+  showTableCard: false,
+  tableData: null
 }
 
 export const getters = {
@@ -51,12 +55,32 @@ export const getters = {
 export const mutations = {
   setFormField(state, { field, value }) {
     state.form[field] = 'boolean' === typeof(value) ? value : Number(value);
+  },
+  setFormValidity(state, value) {
+    state.isFormValid = value;
+  },
+  revealTable(state) {
+    state.showTableCard = true;
+  },
+  setTableData(state, value) {
+    state.tableData = value;
   }
 }
 
 export const actions = {
   setField({ commit }, { field, value }) {
     commit('setFormField', { field, value });
+  },
+  setValidity({ commit }, value) {
+    commit('setFormValidity', value);
+  },
+  async calculate({ commit }) {
+    commit('setTableData', null);
+    commit('revealTable');
+    const response = await graphQlQuery();
+    commit('setTableData', response.content);
+
+
   }
 }
 

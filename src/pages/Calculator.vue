@@ -14,6 +14,8 @@
               large
               color="primary"
               width="150"
+              :disabled="!isFormValid"
+              @click="$store.dispatch('calculate');"
             >
               Calculate
             </v-btn>
@@ -22,7 +24,7 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="7">
+      <v-col md="7" cols="12">
         <v-card
           elevation="6"
         >
@@ -31,7 +33,7 @@
           <v-card-text v-else class="calculator__result-value">N/A</v-card-text>
         </v-card>
       </v-col>
-      <v-col cols="5">
+      <v-col md="5" cols="12" >
         <v-card
           elevation="6"
         >
@@ -41,54 +43,76 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-row v-if="showTableCard">
+      <v-col cols="12">
+        <v-card elevation="6">
+          <v-card-title v-if="tableData" class="calculator__title">Available rates</v-card-title>
+          <v-card-title v-else class="calculator__title">We are processing your request</v-card-title>
+          <v-card-text v-if="tableData">
+            {{tableData}}
+          </v-card-text>
+          <v-card-text v-else>
+            <v-progress-linear
+              indeterminate
+            ></v-progress-linear>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
-  import CalculatorForm from '@/components/CalculatorForm.vue';
-  import { mapGetters } from 'vuex';
+import { mapState } from 'vuex';
+import CalculatorForm from '@/components/CalculatorForm.vue';
+import { mapGetters } from 'vuex';
 
-  export default {
-    name: 'Calculator',
-    data: () => ({
+export default {
+  name: 'Calculator',
+  data: () => ({
+  }),
+  components: {
+    CalculatorForm
+  },
+  computed: {
+    ...mapGetters([
+      'rawLoanAmount',
+      'loanToValue',
+    ]),
+    ...mapState({
+      isFormValid: ({ isFormValid }) => isFormValid,
+      showTableCard: ({ showTableCard }) => showTableCard,
+      tableData: ({ tableData }) => tableData
     }),
-    components: {
-      CalculatorForm
-    },
-    computed: {
-      ...mapGetters([
-        'rawLoanAmount',
-        'loanToValue',
-      ])
-    }
   }
+}
 </script>
 
 <style lang="scss">
-  @import '@/mixins/colors.scss';
+@import '@/mixins/colors.scss';
 
-  .calculator__container {
-    max-width: 700px;
-  }
+.calculator__container {
+  max-width: 700px;
+}
 
-  .v-card__title.calculator__title {
-    font-size: 24px;
-    color: $c-dark;
-  }
+.v-card__title.calculator__title {
+  font-size: 24px;
+  color: $c-dark;
+}
 
-  .v-card__title.calculator__result-label {
-    font-size: 20px;
-    color: $c-dark;
-  }
+.v-card__title.calculator__result-label {
+  font-size: 20px;
+  color: $c-dark;
+}
 
-  .theme--light.v-card > .v-card__text.calculator__result-value {
-    font-size: 48px;
-    font-weight: bold;
-    padding-bottom: 36px;
-    color: $c-dark;
-  }
+.theme--light.v-card > .v-card__text.calculator__result-value {
+  font-size: 48px;
+  font-weight: bold;
+  padding-bottom: 36px;
+  color: $c-dark;
+}
 
-  .calculator__container .v-card__actions {
-    padding: 16px 24px;
-  }
+.calculator__container .v-card__actions {
+  padding: 16px 24px;
+}
 </style>

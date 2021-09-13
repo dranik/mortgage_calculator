@@ -2,7 +2,7 @@
   <v-form>
     <v-container>
       <v-row dense>
-        <v-col cols="6">
+        <v-col cols="12" md="6">
           <v-label><span class="calculator-form__label">Property Purchase Price</span></v-label>
           <v-text-field
             placeholder="e.g 200000"
@@ -15,7 +15,7 @@
             outlined
           ></v-text-field>
         </v-col>
-        <v-col cols="6">
+        <v-col cols="12" md="6">
           <v-label><span class="calculator-form__label">Total savings</span></v-label>
           <v-text-field
             placeholder="e.g 50000"
@@ -30,7 +30,7 @@
         </v-col>
       </v-row>
       <v-row dense>
-        <v-col cols="6">
+        <v-col cols="12" md="6">
           <v-label><span class="calculator-form__label">Real estate commission</span></v-label>
           <v-select
             :items="items"
@@ -42,7 +42,7 @@
             outlined
           ></v-select>
         </v-col>
-        <v-col cols="6">
+        <v-col cols="12" md="6">
           <v-label><span class="calculator-form__label">Annual payment rate(%)</span></v-label>
           <v-text-field
             placeholder="e.g 2.0"
@@ -120,10 +120,16 @@ export default {
       $v: this.validation
     }
   },
+  watch:  {
+    '$v.$invalid'(value) {
+      this.$store.dispatch('setValidity', !value);
+    }
+  },
   methods: {
     validationMessageFor(field) {
       if (field.$model === null) return null;
-      if (field.$invalid) return 'Enter the correct value'
+      if (field.$invalid) return 'Enter the correct value';
+
       return null;
     },
     increaseAnnualPayment() {
